@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ECharts数据统计图</title>
+</head>
+<body>
+<!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+<div id="main" style="width:560px; height:270px;"></div>
+
+<script type="text/javascript" src="jquery-3.2.1.js"></script>
+<script type="text/javascript" src="echarts.min.js"></script>
+<script type="text/javascript">
+
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+
+    // 指定图表的配置项和数据
+    var option = {
+        "title": {
+            text: '拱顶下沉-时间曲线图',
+            x:'center',
+            y: 'bottom'
+        },
+        'animation': true, // 关闭动画效果
+        'tooltip': {},
+        'legend': {
+            'data':["新","右测点","拱顶","左测点"],
+            x: 'center',
+        },
+        'xAxis': {
+            data: ["2018-10-19","2018-10-20","2018-10-21","2018-10-22","2018-10-23","2018-11-07"],
+        },
+        'yAxis': [
+            {
+                type: 'value',
+                show: true,       //显示纵轴false-不显示，true-显示
+                name:'累计值mm'   //这里是纵轴标题
+            }
+        ],
+        'series': [
+    {
+        name: '新',
+        color: 'RED',
+        type: 'line',
+        data: [0,0.000,5.000,4.000,5.000,4.000]
+    },
+    {
+        name: '右测点',
+        color: 'GREEN',
+        type: 'line',
+        data: [0.000,1.000,4.000,4.000,5.000,4.000]
+    },
+    {
+        name: '拱顶',
+        color: 'BLUE',
+        type: 'line',
+        data: [0.000,1.000,3.000,4.000,5.000,4.000]
+    },
+    {
+        name: '左测点',
+        color: 'PURPLE',
+        type: 'line',
+        data: [0.000,1.000,2.000,4.000,5.000,4.000]
+    },
+    ]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+
+    //核心方法
+    function getImage(){
+
+        return getFullCanvasDataURL(document.getElementById('main'));
+    }
+    function getFullCanvasDataURL(el) {
+        //将第一个画布作为基准。
+        var baseCanvas = $(el).find("canvas").first()[0];
+        if (!baseCanvas) {
+            return false;
+        };
+        var width = el.width;
+        var height = el.height;
+        var ctx = baseCanvas.getContext("2d");
+        //遍历，将后续的画布添加到在第一个上
+        $(el).find("canvas").each(function(i, canvasObj) {
+            if (i > 0) {
+                var canvasTmp = $(canvasObj)[0];
+                ctx.drawImage(canvasTmp, 0, 0, width, height);
+            }
+        });
+        //获取base64位的url
+        return baseCanvas.toDataURL('image/png',0.5).replace("data:image/png;base64,","");
+    }
+
+</script>
+</body>
+</html>
